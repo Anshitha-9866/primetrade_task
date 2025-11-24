@@ -1,0 +1,329 @@
+backend/
+│
+├── src/
+│   ├── config/
+│   │   ├── database.js          # Database connection configuration
+│   │   ├── jwt.js               # JWT secret and configuration
+│   │   └── env.js               # Environment variable management
+│   │
+│   ├── models/
+│   │   ├── User.js              # User schema/model
+│   │   └── Task.js              # Task/Entity schema/model
+│   │
+│   ├── controllers/
+│   │   ├── authController.js    # Login, signup, logout logic
+│   │   ├── userController.js    # User profile operations
+│   │   └── taskController.js    # CRUD operations for tasks
+│   │
+│   ├── middleware/
+│   │   ├── auth.js              # JWT verification middleware
+│   │   ├── validation.js        # Request validation middleware
+│   │   └── errorHandler.js      # Centralized error handling
+│   │
+│   ├── routes/
+│   │   ├── authRoutes.js        # /api/auth/* routes
+│   │   ├── userRoutes.js        # /api/user/* routes
+│   │   └── taskRoutes.js        # /api/tasks/* routes
+│   │
+│   ├── utils/
+│   │   ├── tokenUtils.js        # JWT generation/verification helpers
+│   │   ├── passwordUtils.js     # Bcrypt hashing helpers
+│   │   └── validators.js        # Custom validation functions
+│   │
+│   └── app.js                   # Express app setup
+│
+├── tests/                       # Unit and integration tests
+│   ├── auth.test.js
+│   └── tasks.test.js
+│
+├── .env                         # Environment variables (DO NOT COMMIT)
+├── .env.example                 # Template for environment variables
+├── .gitignore
+├── package.json
+├── server.js                    # Entry point
+└── README.md                    # API documentation
+
+
+
+
+
+
+
+frontend/
+│
+├── public/
+│   └── assets/                  # Static images, icons
+│
+├── src/
+│   ├── components/
+│   │   ├── common/              # Reusable components
+│   │   │   ├── Button.jsx
+│   │   │   ├── Input.jsx
+│   │   │   ├── Card.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   └── Loader.jsx
+│   │   │
+│   │   ├── auth/                # Authentication components
+│   │   │   ├── LoginForm.jsx
+│   │   │   └── SignupForm.jsx
+│   │   │
+│   │   └── dashboard/           # Dashboard-specific components
+│   │       ├── TaskList.jsx
+│   │       ├── TaskItem.jsx
+│   │       ├── TaskForm.jsx
+│   │       └── UserProfile.jsx
+│   │
+│   ├── pages/
+│   │   ├── Home.jsx             # Landing page
+│   │   ├── Login.jsx            # Login page
+│   │   ├── Signup.jsx           # Signup page
+│   │   ├── Dashboard.jsx        # Protected dashboard
+│   │   └── NotFound.jsx         # 404 page
+│   │
+│   ├── context/
+│   │   ├── AuthContext.jsx      # Global auth state management
+│   │   └── TaskContext.jsx      # Task state management (optional)
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.js           # Custom hook for auth operations
+│   │   ├── useTasks.js          # Custom hook for task operations
+│   │   └── useForm.js           # Custom hook for form handling
+│   │
+│   ├── services/
+│   │   ├── api.js               # Axios instance configuration
+│   │   ├── authService.js       # Auth API calls
+│   │   └── taskService.js       # Task API calls
+│   │
+│   ├── utils/
+│   │   ├── validation.js        # Client-side validation functions
+│   │   ├── storage.js           # localStorage helpers
+│   │   └── constants.js         # App constants
+│   │
+│   ├── routes/
+│   │   ├── ProtectedRoute.jsx   # Route wrapper for authentication
+│   │   └── AppRoutes.jsx        # All route definitions
+│   │
+│   ├── styles/
+│   │   └── index.css            # Global styles (Tailwind imports)
+│   │
+│   ├── App.jsx                  # Main app component
+│   └── main.jsx                 # Entry point
+│
+├── .env                         # Environment variables (API URL)
+├── .env.example
+├── .gitignore
+├── index.html
+├── package.json
+├── tailwind.config.js           # Tailwind configuration
+├── vite.config.js               # Vite configuration
+└── README.md
+
+
+
+user registration flow
+
+1. User fills signup form → frontend validates
+   ↓
+2. Frontend sends POST /api/auth/signup
+   ↓
+3. Backend validates data
+   ↓
+4. Backend hashes password with bcrypt
+   ↓
+5. Backend saves user to database
+   ↓
+6. Backend generates JWT token
+   ↓
+7. Backend responds with token + user data
+   ↓
+8. Frontend stores token in localStorage
+   ↓
+9. Frontend updates AuthContext (user logged in)
+   ↓
+10. Frontend redirects to dashboard
+
+
+login flow
+
+
+1. User enters credentials
+   ↓
+2. Frontend sends POST /api/auth/login
+   ↓
+3. Backend finds user by email
+   ↓
+4. Backend compares password hash
+   ↓
+5. Backend generates JWT token
+   ↓
+6. Backend responds with token + user data
+   ↓
+7. Frontend stores token in localStorage
+   ↓
+8. Frontend updates AuthContext
+   ↓
+9. Frontend redirects to dashboard
+
+
+crud operations 
+
+1. User performs action (e.g., create task)
+   ↓
+2. Frontend sends POST /api/tasks with JWT in header
+   ↓
+3. Backend auth middleware intercepts request
+   ↓
+4. Middleware extracts JWT from Authorization header
+   ↓
+5. Middleware verifies JWT signature
+   ↓
+6. Middleware decodes userId from token
+   ↓
+7. Middleware attaches user to req.user
+   ↓
+8. Request proceeds to controller
+   ↓
+9. Controller creates task associated with user
+   ↓
+10. Backend responds with created task
+   ↓
+11. Frontend updates UI
+
+
+logout flow
+
+1. User clicks logout
+   ↓
+2. Frontend removes token from localStorage
+   ↓
+3. Frontend clears AuthContext state
+   ↓
+4. Frontend redirects to login page
+   ↓
+5. Subsequent requests fail (no token) → auto-redirect
+
+
+Required Tools & Technologies
+Backend Stack
+Core:
+
+Node.js (v18+) - Runtime environment
+
+Express.js - Web framework
+
+MongoDB + Mongoose - Database (or PostgreSQL + Sequelize)
+
+Authentication:
+
+jsonwebtoken - JWT generation/verification
+
+bcryptjs - Password hashing
+
+Validation & Security:
+
+express-validator or Joi - Input validation
+
+helmet - Security headers
+
+cors - Cross-origin resource sharing
+
+express-rate-limit - Rate limiting
+
+Development:
+
+nodemon - Auto-restart server
+
+dotenv - Environment variables
+
+morgan - Request logging
+
+Frontend Stack
+Core:
+
+React (v18+) - UI library
+
+Vite - Build tool (faster than CRA)
+
+React Router DOM - Routing
+
+HTTP Client:
+
+Axios - API requests
+
+Styling:
+
+Tailwind CSS - Utility-first CSS (recommended)
+
+Or Material-UI / Bootstrap
+
+State Management:
+
+Context API (built-in) - Good enough for this project
+
+Or Zustand / Redux Toolkit for complex apps
+
+Form Handling:
+
+React Hook Form - Form validation
+
+Yup or Zod - Schema validation
+
+Development:
+
+ESLint - Code linting
+
+Prettier - Code formatting
+
+Development Tools
+Version Control:
+
+Git + GitHub
+
+API Testing:
+
+Postman or Thunder Client (VS Code extension)
+
+Database Tools:
+
+MongoDB Compass (for MongoDB)
+
+pgAdmin (for PostgreSQL)
+
+Code Editor:
+
+VS Code with extensions:
+
+ESLint
+
+Prettier
+
+Tailwind CSS IntelliSense
+
+ES7+ React snippets
+
+REST Client
+
+Deployment Options
+Backend:
+
+Render (free tier)
+
+Railway
+
+Heroku
+
+AWS EC2 / DigitalOcean
+
+Frontend:
+
+Vercel (recommended for React)
+
+Netlify
+
+GitHub Pages
+
+Database:
+
+MongoDB Atlas (free tier)
+
+ElephantSQL (PostgreSQL free tier)
