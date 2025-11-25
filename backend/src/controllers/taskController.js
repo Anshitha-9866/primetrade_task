@@ -4,6 +4,8 @@ const Task = require('../models/Task');
 // @route   GET /api/tasks
 // @access  Private
 exports.getAllTasks = async (req, res, next) => {
+    console.log('getAllTasks called'); 
+  console.log('Current user:', req.user);
   try {
     const tasks = await Task.find({ user: req.user._id });
     res.json(tasks);
@@ -81,7 +83,8 @@ exports.deleteTask = async (req, res, next) => {
     const task = await Task.findById(req.params.id);
 
     if (task && task.user.toString() === req.user._id.toString()) {
-      await task.remove();
+      await task.deleteOne();
+
       res.json({ message: 'Task removed' });
     } else {
       res.status(404);
